@@ -12,7 +12,8 @@ export default {
         'sans': ['Open Sans', 'sans-serif'],
       },
       colors:{
-        'primary': '#5F35F5'
+        'primary': '#5F35F5',
+        'overlay': 'rgba(0, 0, 0, 0.41)'
       }
     },
   },

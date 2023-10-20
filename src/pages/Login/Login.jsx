@@ -4,10 +4,13 @@ import google from '../../assets/google.png'
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { userLoginInfo } from '../../slices/userSlice';
 
 const Login = () => {
     const auth = getAuth();
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const [email ,setEmail] = useState('');
     const [password, setPassword] = useState('');
     const[error, setError] = useState()
@@ -39,8 +42,14 @@ const Login = () => {
         }
         if(email && password && (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email))){
             signInWithEmailAndPassword(auth, email, password)
-            .then(() => {
+            .then((user) => {
                 toast.success('Login successful');
+                console.log(user.user);
+                dispatch(userLoginInfo(user.user))
+                localStorage.setItem('userInfo',JSON.stringify(user.user))
+                setTimeout(()=>{
+                    navigate('/')
+                },3000)
             })
             .catch((error) => {
                 const errorCode = error.code;
