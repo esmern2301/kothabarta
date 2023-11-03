@@ -2,15 +2,18 @@ import React, { useState, createRef } from 'react'
 import profile from '../../assets/profile.png'
 import { AiOutlineHome, AiFillMessage, AiOutlineBell, AiOutlineSetting, AiOutlineLogout } from 'react-icons/ai'
 import { BsCloudUploadFill } from 'react-icons/bs'
-import { getAuth, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 // profile photo upload
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { getStorage, ref, uploadString ,getDownloadURL} from "firebase/storage";
+import { useSelector } from 'react-redux';
 
 
 const Sidebar = () => {
+  const data = useSelector(state => state.user.userInfo.photoURL);
+  console.log(data, 'data');
   const [image, setImage] = useState('');
   const [cropData, setCropData] = useState("");
   const cropperRef = createRef();
@@ -59,13 +62,19 @@ const Sidebar = () => {
     if (typeof cropperRef.current?.cropper !== "undefined") {
       setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
       const storage = getStorage();
-      const storageRef = ref(storage, 'some-child');
+      const storageRef = ref(storage, auth.currentUser.uid);
 
       const message4 = cropperRef.current?.cropper.getCroppedCanvas().toDataURL();
       uploadString(storageRef, message4, 'data_url').then((snapshot) => {
         getDownloadURL(storageRef).then((downloadURL) => {
           console.log('File available at', downloadURL);
-          setProfilePic(downloadURL)
+          updateProfile(auth.currentUser, { 
+            photoURL: downloadURL
+          }).then(()=>{
+            setProfileModal(false),
+            setImage(''),
+            setCropData('')
+          })
         });
     
       });
@@ -85,12 +94,25 @@ const Sidebar = () => {
         <div className='w-full h-screen bg-primary absolute top-0 left-0 flex justify-center items-center '>
           <div className='w-[500px]  bg-white rounded-3xl p-10 '>
             <h1 className='font-nunito text-2xl font-bold mb-5 '>Upload your Profile Photo </h1>
-            <input onChange={onPhotoChange} className='block mb-5' type="file" />
-
-            <div
+           
+              
+              <div className='w-[100px] h-[100px] rounded-full  mx-auto'>
+              {
+                image ? 
+                <div className='w-[100px] h-[100px] rounded-full mx-auto'>
+                  <img src={image} alt="" className='img-preview w-full h-full  rounded-full' />
+                  </div>
+                :
+                <img src={data} alt="" className='rounded-full ' />
+              }
+              </div>
+            {/* <div
               className="img-preview w-[90px] h-[90px] rounded-full mx-auto  overflow-hidden"
-            />
-            <Cropper
+            /> */}
+             <input onChange={onPhotoChange} className='block mb-5' type="file" />
+            {
+              image && 
+              <Cropper
               ref={cropperRef}
               style={{ height: 400, width: "100%" }}
               zoomTo={0.5}
@@ -106,6 +128,8 @@ const Sidebar = () => {
               checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
               guides={true}
             />
+            }
+           
             <button onClick={getCropData} className='py-3 px-5 bg-primary text-white mt-5'>Upload </button>
             <button onClick={() => setProfileModal(false)} className='py-3 px-5 bg-red-500 text-white mt-5 ml-5'>Cancel </button>
           </div>
@@ -115,7 +139,7 @@ const Sidebar = () => {
 
           <div className='relative w-full flex justify-center '>
             <div className='mt-10 w-[100px] h-[100px] rounded-full relative group'>
-              <img src={profilePic} alt="" className='rounded-full ' />
+              <img src={data} alt="" className='rounded-full ' />
 
               <div onClick={handleProfileModal} className='w-0  group-hover:w-[100px] h-[100px] bg-[rgba(0,0,0,.5)] absolute top-0 left-0 rounded-full flex justify-center items-center'>
                 <BsCloudUploadFill className='text-white' />

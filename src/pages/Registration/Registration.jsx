@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import registration from '../../assets/registration.png'
 import {RiEyeCloseFill,RiEyeFill} from 'react-icons/ri';
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -51,10 +51,13 @@ const Registration = () => {
         }
         if(email && fullName && password && (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/.test(email))){
             createUserWithEmailAndPassword(auth, email, password)
-            .then(() => {
-                sendEmailVerification(auth.currentUser)
-                .then(() => {
-                    // setSuccess('registraion done. please verify your email');
+            .then((user) => {
+                updateProfile(auth.currentUser, {
+                    displayName: fullName, 
+                    photoURL: "./src/assets/profile.png"
+                  }).then(() => {
+                    sendEmailVerification(auth.currentUser)
+                    console.log(user, 'user');
                     toast.success('registraion done. please verify your email')
                     setEmail('');
                     setFullName('');
@@ -62,8 +65,7 @@ const Registration = () => {
                     setTimeout(()=>{
                         navigate('/login')
                     },3000)
-                  })
-                  
+                  })  
                 }).catch((error) => {
                     const errorCode = error.code;
                     console.log(errorCode);
