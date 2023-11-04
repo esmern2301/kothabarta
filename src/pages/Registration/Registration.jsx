@@ -5,10 +5,12 @@ import {RiEyeCloseFill,RiEyeFill} from 'react-icons/ri';
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom';
+import { getDatabase, ref, set } from "firebase/database";
 
 
 const Registration = () => {
     const auth = getAuth();
+    const db = getDatabase();
     const navigate = useNavigate()
     const [email ,setEmail] = useState('');
     const [fullName, setFullName] = useState('');
@@ -65,13 +67,19 @@ const Registration = () => {
                     setTimeout(()=>{
                         navigate('/login')
                     },3000)
-                  })  
+                  }).then(()=>{
+                    console.log(user, 'useeeeer');
+                    set(ref(db, 'users/' + user.user.uid), {
+                        username: user.user.displayName,
+                        email: user.user.email
+                    });
+                  }) 
                 }).catch((error) => {
                     const errorCode = error.code;
                     console.log(errorCode);
                     if(errorCode.includes('auth/email-already-in-use')){
                       setEmailerr('email is already in used');
-                    }
+                }
             });
         }
         

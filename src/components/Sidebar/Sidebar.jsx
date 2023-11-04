@@ -12,8 +12,8 @@ import { useSelector } from 'react-redux';
 
 
 const Sidebar = () => {
-  const data = useSelector(state => state.user.userInfo.photoURL);
-  console.log(data, 'data');
+  const data = useSelector(state => state.user.userInfo);
+  console.log(data, 'datasssssss');
   const [image, setImage] = useState('');
   const [cropData, setCropData] = useState("");
   const cropperRef = createRef();
@@ -90,56 +90,12 @@ const Sidebar = () => {
 
   return (
     <div className=' h-screen w-full rounded py-[20px] overflow-hidden'>
-      {profileModal ?
-        <div className='w-full h-screen bg-primary absolute top-0 left-0 flex justify-center items-center '>
-          <div className='w-[500px]  bg-white rounded-3xl p-10 '>
-            <h1 className='font-nunito text-2xl font-bold mb-5 '>Upload your Profile Photo </h1>
-           
-              
-              <div className='w-[100px] h-[100px] rounded-full  mx-auto'>
-              {
-                image ? 
-                <div className='w-[100px] h-[100px] rounded-full mx-auto'>
-                  <img src={image} alt="" className='img-preview w-full h-full  rounded-full' />
-                  </div>
-                :
-                <img src={data} alt="" className='rounded-full ' />
-              }
-              </div>
-            {/* <div
-              className="img-preview w-[90px] h-[90px] rounded-full mx-auto  overflow-hidden"
-            /> */}
-             <input onChange={onPhotoChange} className='block mb-5' type="file" />
-            {
-              image && 
-              <Cropper
-              ref={cropperRef}
-              style={{ height: 400, width: "100%" }}
-              zoomTo={0.5}
-              initialAspectRatio={1}
-              preview=".img-preview"
-              src={image}
-              viewMode={1}
-              minCropBoxHeight={10}
-              minCropBoxWidth={10}
-              background={false}
-              responsive={true}
-              autoCropArea={1}
-              checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
-              guides={true}
-            />
-            }
-           
-            <button onClick={getCropData} className='py-3 px-5 bg-primary text-white mt-5'>Upload </button>
-            <button onClick={() => setProfileModal(false)} className='py-3 px-5 bg-red-500 text-white mt-5 ml-5'>Cancel </button>
-          </div>
-        </div>
-        :
         <div className='bg-primary h-full rounded'>
 
           <div className='relative w-full flex justify-center '>
             <div className='mt-10 w-[100px] h-[100px] rounded-full relative group'>
-              <img src={data} alt="" className='rounded-full ' />
+              <img src={data.photoURL} alt="" className='rounded-full ' />
+              <h3 className="text-xl text-white font-bold text-[20px] font-pops">{data.displayName}</h3>
 
               <div onClick={handleProfileModal} className='w-0  group-hover:w-[100px] h-[100px] bg-[rgba(0,0,0,.5)] absolute top-0 left-0 rounded-full flex justify-center items-center'>
                 <BsCloudUploadFill className='text-white' />
@@ -163,6 +119,49 @@ const Sidebar = () => {
           </div>
           <div className='mt-[100px]'>
             <AiOutlineLogout onClick={handleSingout} className='text-[46px] text-[#BAD1FF] mx-auto cursor-pointer' />
+          </div>
+        </div>
+      {
+        profileModal && 
+        <div className='w-full h-screen bg-primary absolute top-0 left-0 flex justify-center items-center z-[999]'>
+          <div className='w-[500px]  bg-white rounded-3xl p-10 '>
+            <h1 className='font-nunito text-2xl font-bold mb-5 '>Upload your Profile Photo </h1>
+
+               {
+                image ?
+                <div className='w-[100px] h-[100px] rounded-full mx-auto overflow-hidden'>
+                   <div className='img-preview w-full h-full  rounded-full' />
+                </div>
+                :
+                <div className='w-[100px] h-[100px] rounded-full mx-auto'>
+                  <img src={data.photoURL} alt="" className='rounded-full ' />
+                </div>
+               }
+
+
+             <input onChange={onPhotoChange} className='block mb-5' type="file" />
+            {
+              image && 
+              <Cropper
+              ref={cropperRef}
+              style={{ height: 400, width: "100%" }}
+              zoomTo={0.5}
+              initialAspectRatio={1}
+              preview=".img-preview"
+              src={image}
+              viewMode={1}
+              minCropBoxHeight={10}
+              minCropBoxWidth={10}
+              background={false}
+              responsive={true}
+              autoCropArea={1}
+              checkOrientation={false} // https://github.com/fengyuanchen/cropperjs/issues/671
+              guides={true}
+            />
+            }
+           
+            <button onClick={getCropData} className='py-3 px-5 bg-primary text-white mt-5'>Upload </button>
+            <button onClick={() => setProfileModal(false)} className='py-3 px-5 bg-red-500 text-white mt-5 ml-5'>Cancel </button>
           </div>
         </div>
       }
