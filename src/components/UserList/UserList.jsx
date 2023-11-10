@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import profile from '../../assets/profile.png'
 import { BiDotsVerticalRounded } from 'react-icons/bi'
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import { useSelector } from 'react-redux';
 
 const UserList = () => {
@@ -9,17 +9,17 @@ const UserList = () => {
     const data = useSelector(state => state.user.userInfo);
     console.log(data);
     const [userData, SetUserData] = useState([]);
+    const [friendrequestList, setFriendrequestList] = useState([]);
+    const [friendList, setFriendList] = useState([]);
 
     useEffect(() => {
         const userRef = ref(db, 'users/');
         onValue(userRef, (snapshot) => {
-            //   console.log(snapshot.val(), 'snapshot');
             let arr = []
             snapshot.forEach((item) => {
                 console.log(item.key, 'keyu');
-                // arr.push(item.val());
-                if(data.uid != item.key){
-                    arr.push(item.val());
+                if (data.uid != item.key) {
+                    arr.push({ ...item.val(), userid: item.key });
                 }
             })
             SetUserData(arr)
@@ -28,9 +28,42 @@ const UserList = () => {
 
     console.log(userData, 'userData');
 
-    const handleFriendRequest = (item) =>{
+    const handleFriendRequest = (item) => {
         console.log(item, 'item');
+        set(push(ref(db, 'friendRequest/')), {
+            sendername: data.displayName,
+            senderid: data.uid,
+            receivername: item.username,
+            receiverid: item.userid
+        });
     }
+
+    useEffect(() => {
+        const friendReqRef = ref(db, 'friendRequest/');
+        onValue(friendReqRef, (snapshot) => {
+            let arr = []
+            snapshot.forEach((item) => {
+                arr.push(item.val().receiverid + item.val().senderid);
+            })
+            setFriendrequestList(arr)
+        });
+    }, [])
+    console.log(friendrequestList);
+
+
+
+    useEffect(() => {
+        const friendRef = ref(db, 'friend/');
+        onValue(friendRef, (snapshot) => {
+            let arr = []
+            snapshot.forEach((item) => {
+                arr.push(item.val().receiverid + item.val().senderid);
+              
+            })
+            setFriendList(arr)
+        });
+    }, [])
+
 
     return (
         <div className=" bg-white border rounded-[20px] px-[23px] py-[20px] drop-shadow-lg mb-4 ">
@@ -51,7 +84,26 @@ const UserList = () => {
                                 <p className="text-gray-500 font-bold text-[14px] font-pops">{item.email}</p>
                             </div>
                             <div>
-                                <button onClick={()=>handleFriendRequest(item)} className='bg-primary text-white px-[22px] font-pops rounded text-[20px]'>+</button>
+                               {
+                                friendList.includes(item.userid + data.uid) ||
+                                friendList.includes(data.uid + item.userid)
+                                ?
+                                <button className='bg-primary text-white px-[22px] font-pops rounded text-[20px]'>friend</button>
+                                :
+<>
+{
+                                    friendrequestList.includes(item.userid + data.uid) ||
+                                        friendrequestList.includes(data.uid + item.userid)
+                                        ?
+                                        <button className='bg-primary text-white px-[22px] font-pops rounded text-[20px]'>pending</button>
+                                        :
+                                        <button onClick={()=>handleFriendRequest(item)} className='bg-primary text-white px-[22px] font-pops rounded text-[20px]'>+</button>
+                                }
+</>
+                               }
+        
+                                
+
                             </div>
                         </div>
                     ))
