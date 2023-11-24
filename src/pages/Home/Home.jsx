@@ -41,7 +41,7 @@ const Home = () => {
             verify ?
             <div className='flex px-[20px]'>
               <div className='w-[186px]'>
-                <Sidebar/>
+                <Sidebar active='home'/>
               </div>
               <div className='w-[500px] p-[20px]'>
                 <GroupList/>

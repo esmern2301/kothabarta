@@ -41,6 +41,9 @@ const FriendRequest = () => {
    
         <div className='mt-[20px] h-[400px] overflow-y-scroll'>
             {
+                friendRequestList.length == 0 ?
+                <p>DATA NOT FOUND</p>
+                :
                 friendRequestList.map((item)=>(
                     <div className="flex items-center justify-between border-b-gray-300 border border-x-0 border-t-0 last:border-none py-[10px] mb-[10px]">
                     <div>

@@ -26,7 +26,7 @@ import {
 } from "firebase/storage";
 import { useSelector } from "react-redux";
 
-const Sidebar = () => {
+const Sidebar = ({active}) => {
   const data = useSelector((state) => state.user.userInfo);
   console.log(data, "datasssssss");
   const [image, setImage] = useState("");
@@ -113,20 +113,20 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className='mt-[78px] relative z-[1] py-[20px] after:absolute after:content-[""] after:top-0 after:left-[25px] after:rounded-l-lg after:bg-white after:h-full after:w-full after:z-[-1] before:absolute before:content-[""] before:top-0 before:right-0 before:bg-primary before:z-[1] before:h-full before:w-[8px] before:rounded-l-lg'>
+        <div className={`mt-[78px] relative z-[1] py-[20px] after:absolute after:content-[""] after:top-0 after:left-[25px] after:rounded-l-lg ${active == 'home' && 'after:bg-white'} after:h-full after:w-full after:z-[-1] before:absolute before:content-[""] before:top-0 before:right-0 before:bg-primary before:z-[1] before:h-full before:w-[8px] before:rounded-l-lg`}>
           <Link to="/">
-            <AiOutlineHome className=" text-[46px] text-primary mx-auto" />
+            <AiOutlineHome className={`text-[46px] ${active == 'home' ? 'text-primary' : 'text-white'} mx-auto`} />
           </Link>
         </div>
-        <div className="mt-[57px]">
+        <div className={`mt-[78px] relative z-[1] py-[20px] after:absolute after:content-[""] after:top-0 after:left-[25px] after:rounded-l-lg ${active == 'msg' && 'after:bg-white'} after:h-full after:w-full after:z-[-1] before:absolute before:content-[""] before:top-0 before:right-0 before:bg-primary before:z-[1] before:h-full before:w-[8px] before:rounded-l-lg`}>
           <Link to="/msg">
-            <AiFillMessage className="text-[46px] text-[#BAD1FF] mx-auto" />
+            <AiFillMessage className={`text-[46px] ${active == 'msg' ? 'text-primary' : 'text-white'} mx-auto`} />
           </Link>
         </div>
-        <div className="mt-[57px]">
+        <div className="mt-[78px]">
           <AiOutlineBell className="text-[46px] text-[#BAD1FF] mx-auto" />
         </div>
-        <div className="mt-[57px]">
+        <div className="mt-[78px]">
           <AiOutlineSetting className="text-[46px] text-[#BAD1FF] mx-auto" />
         </div>
         <div className="mt-[100px]">
