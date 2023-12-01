@@ -85,6 +85,7 @@ const Sidebar = ({active}) => {
           updateProfile(auth.currentUser, {
             photoURL: downloadURL,
           }).then(() => {
+            
             setProfileModal(false), setImage(""), setCropData("");
           });
         });

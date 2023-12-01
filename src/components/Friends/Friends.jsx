@@ -73,7 +73,7 @@ const Friends = () => {
       dispatch(
         activeChat({
           status: "single",
-          id: item.receiveridid,
+          id: item.receiverid,
           name: item.receivername,
         })
       );
