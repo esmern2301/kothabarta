@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
+    "emoji-picker-react": "^4.5.16",
     "firebase": "^10.4.0",
     "moment": "^2.29.4",
     "react": "^18.2.0",

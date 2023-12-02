@@ -130,7 +130,7 @@ const UserList = () => {
                     userData.map((item) => (
                         <div className="flex items-center justify-between border-b-gray-300 border border-x-0 border-t-0 last:border-none py-[10px] mb-[10px]">
                             <div>
-                                <img src={profile} className="rounded-full" />
+                                <img src={item.img} className="rounded-full" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-[20px] font-pops">{item.username}</h3>

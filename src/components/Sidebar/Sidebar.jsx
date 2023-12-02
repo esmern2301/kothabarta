@@ -25,10 +25,13 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { useSelector } from "react-redux";
+import { set,ref as dref, getDatabase, update } from "firebase/database";
 
 const Sidebar = ({active}) => {
   const data = useSelector((state) => state.user.userInfo);
   console.log(data, "datasssssss");
+  const db = getDatabase();
+
   const [image, setImage] = useState("");
   const [cropData, setCropData] = useState("");
   const cropperRef = createRef();
@@ -85,7 +88,15 @@ const Sidebar = ({active}) => {
           updateProfile(auth.currentUser, {
             photoURL: downloadURL,
           }).then(() => {
-            
+             update(dref(db, 'users/' + data.uid),{
+              img: downloadURL
+             });
+          //   set(dref(db, 'users/' + data.uid), {
+          //     img: downloadURL,
+          //     username: data.displayName,
+          //     email: data.email
+    
+          // });
             setProfileModal(false), setImage(""), setCropData("");
           });
         });
